@@ -2,7 +2,7 @@
   "name": "push-notification-manager",
   "private": true,
   "dependencies": {
-    "service-worker": "PolymerLabs/service-worker",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#0.5.5"
+  	"polymer": "Polymer/polymer#0.8.0-rc.4",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.6.0"
   }
 }
