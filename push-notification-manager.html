@@ -16,8 +16,161 @@
 <link rel="import" href="../polymer/polymer.html">
 
 <script>
-  Polymer({
-    is: 'push-notification-manager',
-    _version: '1.0'
-  });
+  (function() {
+    // TODO: Doesn't work for IE or Safari, and the usual
+    // document.getElementsByTagName('script') workaround seems to be broken by
+    // HTML imports. Not important for now as neither of those browsers support
+    // service worker yet.
+    var currentScript = document.currentScript.baseURI;
+
+    var SCOPE_BASE = new URL('./$$push-notification-manager$$/', currentScript).href;
+    var WORKER_URL = new URL('./service-worker.js', currentScript).href;
+
+    var SUPPORTED = 'serviceWorker' in navigator &&
+        'PushManager' in window  &&
+        'Notification' in window;
+
+    Polymer({
+      is: 'push-notification-manager',
+
+      properties: {
+        supported: {
+          readOnly: true,
+          type: Boolean,
+          value: SUPPORTED
+        },
+        subscription: {
+          readOnly: true,
+          type: String,
+          notify: true,
+          value: ''
+        },
+        enabled: {
+          readOnly: true,
+          type: Boolean,
+          notify: true,
+          value: false
+        },
+        tag: String,
+        messageUrl: String,
+        title: String,
+        message: String,
+        iconUrl: String,
+        clickUrl: String
+      },
+
+      _getScope: function() {
+        return SCOPE_BASE + (this.tag || '' );
+      },
+
+      _getRegistration: function() {
+        return navigator.serviceWorker.getRegistration(this._getScope());
+      },
+
+      _registrationReady: function(registration) {
+        if (registration.active) {
+          return Promise.resolve();
+        }
+
+        var serviceWorker = registration.installing || registration.waiting;
+
+        return new Promise(function(resolve, reject) {
+          // Because the Promise function is called on next tick there is a
+          // small chance that the worker became active already.
+          if (serviceWorker.state === 'activated') {
+            resolve();
+          }
+          var listener = function(event) {
+            if (serviceWorker.state === 'activated') {
+              resolve();
+            } else if (serviceWorker.state === 'redundant') {
+              reject(new Error('Worker became redundant'));
+            } else {
+              return;
+            }
+            serviceWorker.removeEventListener('statechange', listener);
+          }
+          serviceWorker.addEventListener('statechange', listener);
+        }); 
+      },
+
+      _absUrl: function(url) {
+        if (typeof(url) === 'string') {
+          return new URL(url, document.location).href;
+        }
+      },
+
+      enable: function() {
+        if (!this.supported) {
+          return Promise.reject(new Error('Your browser does not support push notifications'));
+        }
+
+        return (new Promise(Notification.requestPermission)).then(function(permission) {
+          if (permission === 'denied') {
+            return Promise.reject(new Error('Cannot enable notifications: Permission denied'));
+          } else if (permission !== 'granted') {
+            return Promise.reject(new Error('Cannot enable notifications: Permission was not granted'));
+          }
+
+          var options = encodeURIComponent(JSON.stringify({
+            tag: this.tag,
+            messageUrl: this.messageUrl,
+            title: this.title,
+            message: this.message,
+            iconUrl: this._absUrl(this.iconUrl),
+            clickUrl: this._absUrl(this.clickUrl)
+          }));
+
+          var workerScript = WORKER_URL + '?' + options;
+
+          return navigator.serviceWorker.register(workerScript, {scope: this._getScope()}).then(function(registration) {
+            return this._registrationReady(registration).then(function() {
+              return registration.pushManager.subscribe();
+            });
+          }.bind(this)).then(function(subscription) {
+            this._setSubscription(subscription);
+            this._setEnabled(true);
+          }.bind(this));
+        }.bind(this)).catch(function(error) {
+          this.fire('push-notification-manager-error', error.message || error);
+        }.bind(this));
+      },
+
+      disable: function() {
+        if (this.supported) {
+          this._getRegistration().then(function(registration) {
+            if (!registration) {
+              return;
+            }
+            return registration.pushManager.getSubscription().then(function(subscription) {
+              if (subscription) {
+                return subscription.unsubscribe();
+              }
+            }).then(function() {
+              return registration.unregister();
+            }).then(function() {
+              this._setSubscription();
+              this._setEnabled(false);
+            }.bind(this)).catch(function(error) {
+              this.fire('push-notification-manager-error', error.message || error);
+            }.bind(this));
+          }.bind(this));
+        }
+      },
+
+      ready: function() {
+        if (this.supported) {
+          this._getRegistration().then(function(registration) {
+            if (!registration) {
+              return;
+            }
+            return registration.pushManager.getSubscription().then(function(subscription) {
+              this._setSubscription(subscription);
+            }.bind(this))
+          }.bind(this));
+        }
+      }    
+    });
+  })();
 </script>
+

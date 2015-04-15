@@ -40,27 +40,42 @@ var getVisible = function(url) {
 };
 
 var notify = function() {
-  // TODO: Investigate {credentials: 'include'}
-  // TODO: Including auth params in the options isn't going to work. Access
-  // tokens, etc., expire :(
-  return fetch(options.messageUrl).then(function(response) {
-    return response.json();
-  }).then(function(data) {
-    var messages = [];
-    for (var key in data) {
-      messages.push(data[key]);
-    }
-    return messages[0] || {};
-  }).then(function(message) {
-    return getVisible(message.url).then(function(visibleClient) {
+  var messagePromise;
+
+  if (options.messageUrl) {
+    messagePromise = fetch(options.messageUrl).then(function(response) {
+      return response.json();
+    }).then(function(data) {
+      var messages = [];
+      for (var key in data) {
+        messages.push(data[key]);
+      }
+      return messages[0] || {};
+    });
+  } else {
+    messagePromise = Promise.resolve({});
+  }
+
+  return messagePromise.then(function(message) {
+    message.title = message.title || options.title || '';
+    message.message = message.message || options.message || '';
+    message.tag = message.tag || options.tag || DEFAULT_TAG;
+    message.icon = message.iconUrl || options.iconUrl;
+    message.clickUrl = message.clickUrl || options.clickUrl;
+
+    var iconUrl = new URL(message.icon || 'about:blank');
+    iconUrl.hash = encodeURIComponent(message.clickUrl);
+    message.icon = iconUrl.href;
+
+    return getVisible(message.clickUrl).then(function(visibleClient) {
       if (visibleClient) {
         // TODO: Do something here, like postMessage the client and trigger an event
       } else {
-        // TODO: Have better configuration for how JSON data maps to notifications
-        return self.registration.showNotification(message.title || options.title, {
-          body: message.message || options.message || '',
-          tag: message.url || message.tag || options.tag || DEFAULT_TAG,
-          icon: message.icon || options.icon,
+        return self.registration.showNotification(message.title, {
+          body: message.message,
+          tag: message.tag,
+          icon: message.icon,
+          data: message.clickUrl
         });
       }
     });
@@ -70,12 +85,17 @@ var notify = function() {
 var clickHandler = function(notification) {
   notification.close();
 
-  var url = options.clickUrl || notification.tag;
+  var url = decodeURIComponent(new URL(notification.icon).hash.substring(1));
+
+  if (!url) {
+    return;
+  }
 
   return getClientWindows().then(function(clientList) {
     for (var client of clientList) {
       if (client.url === url && 'focus' in client) {
-        return client.focus();
+        client.focus();
+        return client;
       }
     }
     if ('openWindow' in clients) {
