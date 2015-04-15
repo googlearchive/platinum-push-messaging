@@ -100,6 +100,19 @@
         }
       },
 
+      _messageHandler: function(event) {
+        if (event.data && event.data.source === this._getScope()) {
+          switch(event.data.type) {
+          case 'push':
+            this.fire('push-notification-manager-push', event.data);
+            break;
+          case 'click':
+            this.fire('push-notification-manager-click', event.data);
+            break;
+          }
+        }
+      },
+
       enable: function() {
         if (!this.supported) {
           return Promise.reject(new Error('Your browser does not support push notifications'));
@@ -160,6 +173,10 @@
 
       ready: function() {
         if (this.supported) {
+          var handler = this._messageHandler.bind(this);
+          window.addEventListener('message', handler);
+          navigator.serviceWorker.addEventListener('message', handler);
+
           this._getRegistration().then(function(registration) {
             if (!registration) {
               return;
