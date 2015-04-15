@@ -42,12 +42,20 @@
       var debug = function(name, event) {
         var el = document.createElement('li');
         var pre = document.createElement('pre');
-        pre.innerHTML = name + ': ' + JSON.stringify(event.detail.value, null, 2);
+        pre.innerHTML = name + ': ' + JSON.stringify(event.detail, null, 2);
         el.appendChild(pre);
         debugOutput.appendChild(el);
       };
       manager.addEventListener('push-notification-manager-error', function(event) {
         debug('error', event);
+      });
+
+      manager.addEventListener('push-notification-manager-push', function(event) {
+        debug('push', event);
+      });
+
+      manager.addEventListener('push-notification-manager-click', function(event) {
+        debug('click', event);
       });
 
       manager.addEventListener('subscription-changed', function(event) {

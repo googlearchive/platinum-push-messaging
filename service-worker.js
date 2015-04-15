@@ -39,6 +39,14 @@ var getVisible = function(url) {
   });
 };
 
+var messageClient = function(client, message, notificationShown) {
+  client.postMessage({
+    source: self.registration.scope,
+    message: message,
+    type: notificationShown ? 'click' : 'push'
+  });
+};
+
 var notify = function() {
   var messagePromise;
 
@@ -57,26 +65,26 @@ var notify = function() {
   }
 
   return messagePromise.then(function(message) {
-    message.title = message.title || options.title || '';
-    message.message = message.message || options.message || '';
-    message.tag = message.tag || options.tag || DEFAULT_TAG;
-    message.icon = message.iconUrl || options.iconUrl;
-    message.clickUrl = message.clickUrl || options.clickUrl;
+    var detail = {
+      title: message.title || options.title || '',
+      body: message.message || options.message || '',
+      tag: message.tag || options.tag || DEFAULT_TAG,
+      icon: message.iconUrl || options.iconUrl,
+      data: message
+    };
 
-    var iconUrl = new URL(message.icon || 'about:blank');
-    iconUrl.hash = encodeURIComponent(message.clickUrl);
-    message.icon = iconUrl.href;
+    var clickUrl = message.clickUrl || options.clickUrl;
 
-    return getVisible(message.clickUrl).then(function(visibleClient) {
+    // TODO: Only do this hack if 'data' is not supported
+    var iconUrl = new URL(detail.icon || 'about:blank');
+    iconUrl.hash = encodeURIComponent(JSON.stringify(detail.data));
+    detail.icon = iconUrl.href;
+
+    return getVisible(clickUrl).then(function(visibleClient) {
       if (visibleClient) {
-        // TODO: Do something here, like postMessage the client and trigger an event
+        messageClient(visibleClient, message, false);
       } else {
-        return self.registration.showNotification(message.title, {
-          body: message.message,
-          tag: message.tag,
-          icon: message.icon,
-          data: message.clickUrl
-        });
+        return self.registration.showNotification(detail.title, detail);
       }
     });
   });
@@ -85,7 +93,9 @@ var notify = function() {
 var clickHandler = function(notification) {
   notification.close();
 
-  var url = decodeURIComponent(new URL(notification.icon).hash.substring(1));
+  var message = JSON.parse(decodeURIComponent(new URL(notification.icon).hash.substring(1)));
+
+  var url = message.clickUrl || options.clickUrl;
 
   if (!url) {
     return;
@@ -100,6 +110,10 @@ var clickHandler = function(notification) {
     }
     if ('openWindow' in clients) {
       return clients.openWindow(url);
+    }
+  }).then(function(client) {
+    if (client) {
+      messageClient(client, message, true);
     }
   });
 };
