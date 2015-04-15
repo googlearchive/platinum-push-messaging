@@ -22,7 +22,10 @@ var DEFAULT_TAG = self.registration.scope;
 self.skipWaiting();
 
 var getClientWindows = function() {
-  return clients.matchAll({type: 'window', includeUncontrolled: true}).catch(function(error) {
+  return clients.matchAll({
+    type: 'window',
+    includeUncontrolled: true
+  }).catch(function(error) {
     // Couldn't get client list, possibly not yet implemented in the browser
     return [];
   })
@@ -31,7 +34,8 @@ var getClientWindows = function() {
 var getVisible = function(url) {
   return getClientWindows().then(function(clientList) {
     for (var client of clientList) {
-      if (client.url === url && client.focused && client.visibilityState === 'visible') {
+      if (client.url === url && client.focused &&
+          client.visibilityState === 'visible') {
         return client;
       }
     }
@@ -47,7 +51,7 @@ var messageClient = function(client, message, notificationShown) {
   });
 };
 
-var notify = function() {
+var notify = function(data) {
   var messagePromise;
 
   if (options.messageUrl) {
@@ -61,7 +65,7 @@ var notify = function() {
       return messages[0] || {};
     });
   } else {
-    messagePromise = Promise.resolve({});
+    messagePromise = data ? data.json() : Promise.resolve({});
   }
 
   return messagePromise.then(function(message) {
@@ -93,7 +97,13 @@ var notify = function() {
 var clickHandler = function(notification) {
   notification.close();
 
-  var message = JSON.parse(decodeURIComponent(new URL(notification.icon).hash.substring(1)));
+  var message;
+  if ('data' in notification) {
+    message = notification.data;
+  } else {
+    message = new URL(notification.icon).hash.substring(1);
+    message = JSON.parse(decodeURIComponent(message));
+  }
 
   var url = message.clickUrl || options.clickUrl;
 
@@ -119,7 +129,7 @@ var clickHandler = function(notification) {
 };
 
 self.addEventListener('push', function(event) {
-  event.waitUntil(notify());
+  event.waitUntil(notify(event.data));
 });
 
 self.addEventListener('notificationclick', function(event) {
