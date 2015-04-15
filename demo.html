@@ -21,9 +21,45 @@
     <title>&lt;push-notification-manager&gt; Demo</title>
     <script src="../webcomponentsjs/webcomponents-lite.min.js"></script>
     <link rel="import" href="push-notification-manager.html">
+    <link rel="manifest" href="demo-manifest.json">
   </head>
 
   <body>
-    <push-notification-manager></push-notification-manager>
+    <push-notification-manager
+      title="You got pushed!"
+      message="A push message arrived, but sadly it's a lame, bodyless kind"
+      click-url="demo.html"
+    >
+    </push-notification-manager>
+
+    <ul id="debug-output">
+    </ul>
+
+    <script>
+    (function() {
+      var manager = document.querySelector('push-notification-manager');
+      var debugOutput = document.querySelector('#debug-output');
+      var debug = function(name, event) {
+        var el = document.createElement('li');
+        var pre = document.createElement('pre');
+        pre.innerHTML = name + ': ' + JSON.stringify(event.detail.value, null, 2);
+        el.appendChild(pre);
+        debugOutput.appendChild(el);
+      };
+      manager.addEventListener('push-notification-manager-error', function(event) {
+        debug('error', event);
+      });
+
+      manager.addEventListener('subscription-changed', function(event) {
+        debug('subscription', event);
+      });
+
+      manager.addEventListener('enabled-changed', function(event) {
+        debug('enabled', event);
+      });
+
+      manager.enable();
+    })();
+    </script>
   </body>
 </html>
