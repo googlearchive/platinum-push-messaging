@@ -115,7 +115,7 @@
 
       enable: function() {
         if (!this.supported) {
-          return Promise.reject(new Error('Your browser does not support push notifications'));
+          return this.fire('push-notification-manager-error', 'Your browser does not support push notifications');
         }
 
         return (new Promise(Notification.requestPermission)).then(function(permission) {
