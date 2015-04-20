@@ -18,6 +18,7 @@
 var options = JSON.parse(decodeURIComponent(location.search.substring(1)));
 
 var DEFAULT_TAG = self.registration.scope;
+var DATA_SUPPORT = Notification.prototype.hasOwnProperty('data');
 
 self.skipWaiting();
 
@@ -79,10 +80,14 @@ var notify = function(data) {
 
     var clickUrl = message.clickUrl || options.clickUrl;
 
-    // TODO: Only do this hack if 'data' is not supported
-    var iconUrl = new URL(detail.icon || 'about:blank');
-    iconUrl.hash = encodeURIComponent(JSON.stringify(detail.data));
-    detail.icon = iconUrl.href;
+    if (!DATA_SUPPORT) {
+      // If there is no 'data' property support on the notification then we have
+      // to pass the link URL (and anything else) some other way. We use the
+      // hash of the icon URL to store it.
+      var iconUrl = new URL(detail.icon || 'about:blank');
+      iconUrl.hash = encodeURIComponent(JSON.stringify(detail.data));
+      detail.icon = iconUrl.href;
+    }
 
     return getVisible(clickUrl).then(function(visibleClient) {
       if (visibleClient) {
