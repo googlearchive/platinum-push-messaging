@@ -127,7 +127,7 @@
 
           var options = encodeURIComponent(JSON.stringify({
             tag: this.tag,
-            messageUrl: this.messageUrl,
+            messageUrl: this._absUrl(this.messageUrl),
             title: this.title,
             message: this.message,
             iconUrl: this._absUrl(this.iconUrl),
