@@ -1,8 +1,33 @@
 {
   "name": "push-notification-manager",
   "private": true,
+  "version": "0.8.0",
+  "authors": [
+    "The Polymer Authors"
+  ],
+  "description": "Subscribes for push messaging and handles notifications.",
+  "keywords": [
+    "push",
+    "messaging",
+    "notification",
+    "polymer",
+    "service-worker",
+    "serviceworker",
+    "web-component",
+    "web-components"
+  ],
+  "license": "Apache-2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
   "dependencies": {
-  	"polymer": "Polymer/polymer#0.8.0-rc.4",
-    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.6.0"
+    "polymer": "Polymer/polymer#v0.8.0-rc.7"
+  },
+  "devDependencies": {
+    "webcomponentsjs": "webcomponents/webcomponentsjs#~0.6.1"
   }
 }
