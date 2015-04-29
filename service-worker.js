@@ -74,11 +74,11 @@ var notify = function(data) {
       title: message.title || options.title || '',
       body: message.message || options.message || '',
       tag: message.tag || options.tag || DEFAULT_TAG,
-      icon: message.iconUrl || options.iconUrl,
+      icon: message.icon || options.iconUrl,
       data: message
     };
 
-    var clickUrl = message.clickUrl || options.clickUrl;
+    var clickUrl = message.url || options.clickUrl;
 
     if (!DATA_SUPPORT) {
       // If there is no 'data' property support on the notification then we have

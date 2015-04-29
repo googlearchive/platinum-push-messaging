@@ -27,6 +27,7 @@
     "polymer": "Polymer/polymer#v0.8.0-rc.7"
   },
   "devDependencies": {
-    "webcomponentsjs": "webcomponents/webcomponentsjs#~0.6.1"
+    "webcomponentsjs": "webcomponents/webcomponentsjs#~0.6.1",
+    "iron-doc-viewer": "PolymerElements/iron-doc-viewer#^0.8.0"
   }
 }
