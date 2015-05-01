@@ -193,6 +193,11 @@
       ready: function() {
         if (this.supported) {
           var handler = this._messageHandler.bind(this);
+          // NOTE: We add the event listener twice because the specced and
+          // implemented behaviors do not match. In Chrome 42, messages are
+          // received on window. In the current spec they are supposed to be
+          // received on navigator.serviceWorker.
+          // TODO: Remove the non-spec code in the future.
           window.addEventListener('message', handler);
           navigator.serviceWorker.addEventListener('message', handler);
 
