@@ -113,6 +113,25 @@
         }
       },
 
+      /**
+       * Takes an options object and creates a stable JSON serialization of it.
+       * This naive algorithm will only work if the object contains only
+       * non-nested properties.
+       *
+       * @param options {Object.<String, ?(String|Number|Boolean)>}
+       * @return String
+       */
+      _serializeOptions: function(options) {
+        var props = Object.keys(options);
+        props.sort();
+        var parts = props.filter(function(propName) {
+          return !!options[propName];
+        }).map(function(propName) {
+          return JSON.stringify(propName) + ':' + JSON.stringify(options[propName]);
+        });
+        return '{' + parts.join(',') + '}';
+      },
+
       enable: function() {
         if (!this.supported) {
           return this.fire('push-notification-manager-error', 'Your browser does not support push notifications');
@@ -125,14 +144,14 @@
             return Promise.reject(new Error('Cannot enable notifications: Permission was not granted'));
           }
 
-          var options = encodeURIComponent(JSON.stringify({
+          var options = this._serializeOptions({
             tag: this.tag,
             messageUrl: this._absUrl(this.messageUrl),
             title: this.title,
             message: this.message,
             iconUrl: this._absUrl(this.iconUrl),
             clickUrl: this._absUrl(this.clickUrl)
-          }));
+          });
 
           var workerScript = WORKER_URL + '?' + options;
 
