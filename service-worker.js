@@ -58,12 +58,6 @@ var notify = function(data) {
   if (options.messageUrl) {
     messagePromise = fetch(options.messageUrl).then(function(response) {
       return response.json();
-    }).then(function(data) {
-      var messages = [];
-      for (var key in data) {
-        messages.push(data[key]);
-      }
-      return messages[0] || {};
     });
   } else {
     messagePromise = data ? data.json() : Promise.resolve({});

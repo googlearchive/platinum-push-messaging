@@ -39,7 +39,16 @@
      * The element can be placed anywhere.
      * 
      * The data for how a notification should be displayed can come from one of
-     * three places. The first way is to send the message data in the body of
+     * three places.
+     *
+     * Firstly, you can specify a URL from which to fetch the message data.
+     * ```
+     * <push-notification-manager
+     *   message-url="notification-data.json">
+     * </push-notification-manager>
+     * ```
+     *
+     * The second way is to send the message data in the body of
      * the push message from your server. In this case you do not need to
      * configure anything in your page:
      * ```
@@ -51,14 +60,8 @@
      * and this element should use that data when it is implemented in the
      * future.
      *
-     * Secondly, you can specify a URL from which to fetch the message data.
-     * If the push message contains a message body then this method will not be
-     * used, even if the URL is provided:
-     * ```
-     * <push-notification-manager
-     *   message-url="notification-data.json">
-     * </push-notification-manager>
-     * ```
+     * If a message-url is provided then the message body will be ignored in
+     * favor of the first method.
      *
      * Thirdly, you can manually define the attributes on the element:
      * ```
