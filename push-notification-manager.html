@@ -37,12 +37,40 @@
      * received.
      *
      * The element can be placed anywhere.
+     * 
+     * The data for how a notification should be displayed can come from one of
+     * three places. The first way is to send the message data in the body of
+     * the push message from your server. In this case you do not need to
+     * configure anything in your page:
+     * ```
+     * <push-notification-manager></push-notification-manager>
+     * ```
+     * **Note that this method is not currently supported by any browser**. It
+     * is, however, defined in the
+     * [draft W3C specification](http://w3c.github.io/push-api/#the-push-event)
+     * and this element should use that data when it is implemented in the
+     * future.
+     *
+     * Secondly, you can specify a URL from which to fetch the message data.
+     * If the push message contains a message body then this method will not be
+     * used, even if the URL is provided:
+     * ```
+     * <push-notification-manager
+     *   message-url="notification-data.json">
+     * </push-notification-manager>
+     * ```
+     *
+     * Thirdly, you can manually define the attributes on the element:
      * ```
      * <push-notification-manager
      *   title="Application updated"
-     *   message="The application was updated in the background">
+     *   message="The application was updated in the background"
+     *   icon-url="icon.png"
+     *   click-url="notification.html">
      * </push-notification-manager>
      * ```
+     * These values will also be used as defaults if one of the other methods
+     * does not provide a value for that property.
      */
     Polymer({
       is: 'push-notification-manager',
