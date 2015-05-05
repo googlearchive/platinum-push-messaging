@@ -104,7 +104,7 @@ var clickHandler = function(notification) {
     message = JSON.parse(decodeURIComponent(message));
   }
 
-  var url = message.clickUrl || options.clickUrl;
+  var url = message.url || options.clickUrl;
 
   if (!url) {
     return;
