@@ -58,12 +58,6 @@ var notify = function(data) {
   if (options.messageUrl) {
     messagePromise = fetch(options.messageUrl).then(function(response) {
       return response.json();
-    }).then(function(data) {
-      var messages = [];
-      for (var key in data) {
-        messages.push(data[key]);
-      }
-      return messages[0] || {};
     });
   } else {
     messagePromise = data ? data.json() : Promise.resolve({});
@@ -74,11 +68,11 @@ var notify = function(data) {
       title: message.title || options.title || '',
       body: message.message || options.message || '',
       tag: message.tag || options.tag || DEFAULT_TAG,
-      icon: message.iconUrl || options.iconUrl,
+      icon: message.icon || options.iconUrl,
       data: message
     };
 
-    var clickUrl = message.clickUrl || options.clickUrl;
+    var clickUrl = message.url || options.clickUrl;
 
     if (!DATA_SUPPORT) {
       // If there is no 'data' property support on the notification then we have
@@ -110,7 +104,7 @@ var clickHandler = function(notification) {
     message = JSON.parse(decodeURIComponent(message));
   }
 
-  var url = message.clickUrl || options.clickUrl;
+  var url = message.url || options.clickUrl;
 
   if (!url) {
     return;
