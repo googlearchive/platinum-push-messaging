@@ -22,7 +22,7 @@ var getClientWindows = function() {
   }).catch(function(error) {
     // Couldn't get client list, possibly not yet implemented in the browser
     return [];
-  })
+  });
 };
 
 var getVisible = function(url) {
