@@ -284,13 +284,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           return this.fire('push-notification-manager-error', 'Your browser does not support push notifications');
         }
 
-        return (new Promise(Notification.requestPermission)).then(function(permission) {
-          if (permission === 'denied') {
-            return Promise.reject(new Error('Cannot enable notifications: Permission denied'));
-          } else if (permission !== 'granted') {
-            return Promise.reject(new Error('Cannot enable notifications: Permission was not granted'));
-          }
-
           var options = this._serializeOptions({
             tag: this.tag,
             messageUrl: this._absUrl(this.messageUrl),
@@ -302,14 +295,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           var workerScript = WORKER_URL + '?' + options;
 
-          return navigator.serviceWorker.register(workerScript, {scope: SCOPE}).then(function(registration) {
-            return this._registrationReady(registration).then(function() {
-              return registration.pushManager.subscribe();
-            });
-          }.bind(this)).then(function(subscription) {
-            this._setSubscription(subscription);
-            this._setEnabled(true);
-          }.bind(this));
+        return navigator.serviceWorker.register(workerScript, {scope: SCOPE}).then(function(registration) {
+          return this._registrationReady(registration).then(function() {
+            return registration.pushManager.subscribe();
+          });
+        }.bind(this)).then(function(subscription) {
+          this._setSubscription(subscription);
+          this._setEnabled(true);
         }.bind(this)).catch(function(error) {
           this.fire('push-notification-manager-error', error.message || error);
         }.bind(this));
