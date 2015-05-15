@@ -35,7 +35,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var debug = function(name, event) {
         var el = document.createElement('li');
         var pre = document.createElement('pre');
-        pre.textContet = name + ': ' + JSON.stringify(event.detail, null, 2);
+        pre.textContent = name + ': ' + JSON.stringify(event.detail, null, 2);
         el.appendChild(pre);
         debugOutput.appendChild(el);
       };
