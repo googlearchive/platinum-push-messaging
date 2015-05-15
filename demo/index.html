@@ -10,7 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>&lt;push-notification-manager&gt; Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
     <link rel="import" href="../push-notification-manager.html">
@@ -35,7 +35,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var debug = function(name, event) {
         var el = document.createElement('li');
         var pre = document.createElement('pre');
-        pre.innerHTML = name + ': ' + JSON.stringify(event.detail, null, 2);
+        pre.textContet = name + ': ' + JSON.stringify(event.detail, null, 2);
         el.appendChild(pre);
         debugOutput.appendChild(el);
       };
