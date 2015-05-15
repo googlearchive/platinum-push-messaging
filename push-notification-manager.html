@@ -26,6 +26,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         'Notification' in window;
 
     /**
+     * @const {Number} The desired version of the service worker to use. This is
+     * not strictly tied to anything except that it should be changed whenever
+     * a breaking change is made to the service worker code.
+     */
+    var VERSION = 1;
+
+    /**
      * `<push-notification-manager>` sets up a
      * [push messaging](http://updates.html5rocks.com/2015/03/push-notificatons-on-the-open-web)
      * subscription and allows you to define what happens when a push message is
@@ -275,6 +282,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       /**
+       * Determine the URL of the worker based on the currently set parameters
+       *
+       * @return String the URL
+       */
+      _getWorkerURL: function() {
+        var options = this._serializeOptions({
+          tag: this.tag,
+          messageUrl: this._absUrl(this.messageUrl),
+          title: this.title,
+          message: this.message,
+          iconUrl: this._absUrl(this.iconUrl),
+          clickUrl: this._absUrl(this.clickUrl),
+          version: VERSION
+        });
+
+        return WORKER_URL + '?' + options;
+      },
+
+      /**
        * Request push messaging to be enabled.
        *
        * @return {Promise<undefined>}
@@ -284,18 +310,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           return this.fire('push-notification-manager-error', 'Your browser does not support push notifications');
         }
 
-          var options = this._serializeOptions({
-            tag: this.tag,
-            messageUrl: this._absUrl(this.messageUrl),
-            title: this.title,
-            message: this.message,
-            iconUrl: this._absUrl(this.iconUrl),
-            clickUrl: this._absUrl(this.clickUrl)
-          });
-
-          var workerScript = WORKER_URL + '?' + options;
-
-        return navigator.serviceWorker.register(workerScript, {scope: SCOPE}).then(function(registration) {
+        return navigator.serviceWorker.register(this._getWorkerURL(), {scope: SCOPE}).then(function(registration) {
           return this._registrationReady(registration).then(function() {
             return registration.pushManager.subscribe();
           });
@@ -348,6 +363,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this._getRegistration().then(function(registration) {
             if (!registration) {
               return;
+            }
+            if (registration.active && registration.active.scriptURL !== this._getWorkerURL()) {
+              // We have an existing worker in this scope, but it is out of date
+              return this.enable();
             }
             return registration.pushManager.getSubscription().then(function(subscription) {
               this._setSubscription(subscription);
