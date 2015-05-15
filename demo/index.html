@@ -11,26 +11,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>&lt;push-notification-manager&gt; Demo</title>
+    <title>&lt;platinum-push-messaging&gt; Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
-    <link rel="import" href="../push-notification-manager.html">
+    <link rel="import" href="../platinum-push-messaging.html">
     <link rel="manifest" href="manifest.json">
   </head>
 
   <body>
-    <push-notification-manager
+    <platinum-push-messaging
       title="You got pushed!"
       message="A push message arrived, but sadly it's a lame, bodyless kind"
       click-url="index.html"
     >
-    </push-notification-manager>
+    </platinum-push-messaging>
 
     <ul id="debug-output">
     </ul>
 
     <script>
     (function() {
-      var manager = document.querySelector('push-notification-manager');
+      var manager = document.querySelector('platinum-push-messaging');
       var debugOutput = document.querySelector('#debug-output');
       var debug = function(name, event) {
         var el = document.createElement('li');
@@ -39,15 +39,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         el.appendChild(pre);
         debugOutput.appendChild(el);
       };
-      manager.addEventListener('push-notification-manager-error', function(event) {
+      manager.addEventListener('platinum-push-messaging-error', function(event) {
         debug('error', event);
       });
 
-      manager.addEventListener('push-notification-manager-push', function(event) {
+      manager.addEventListener('platinum-push-messaging-push', function(event) {
         debug('push', event);
       });
 
-      manager.addEventListener('push-notification-manager-click', function(event) {
+      manager.addEventListener('platinum-push-messaging-click', function(event) {
         debug('click', event);
       });
 
