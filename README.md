@@ -1,2 +1,2 @@
-# push-notification-manager
+# platinum-push-messaging
 Push Notifications with Polymer
