@@ -21,6 +21,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     var SCOPE = new URL('./$$platinum-push-messaging$$/', currentScript).href;
     var WORKER_URL = new URL('./service-worker.js', currentScript).href;
 
+    var BASE_URL = new URL('./', document.location.href).href;
+
     var SUPPORTED = 'serviceWorker' in navigator &&
         'PushManager' in window  &&
         'Notification' in window;
@@ -233,18 +235,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       /**
-       * Resolves a URL that is relative to the page to an absolute URL
-       *
-       * @param url {String} a relative URL
-       * @return {String} the equivalent absolute URL
-       */
-      _absUrl: function(url) {
-        if (typeof(url) === 'string') {
-          return new URL(url, document.location).href;
-        }
-      },
-
-      /**
        * Event handler for the `message` event.
        *
        * @param event {MessageEvent}
@@ -289,12 +279,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _getWorkerURL: function() {
         var options = this._serializeOptions({
           tag: this.tag,
-          messageUrl: this._absUrl(this.messageUrl),
+          messageUrl: this.messageUrl,
           title: this.title,
           message: this.message,
-          iconUrl: this._absUrl(this.iconUrl),
-          clickUrl: this._absUrl(this.clickUrl),
-          version: VERSION
+          iconUrl: this.iconUrl,
+          clickUrl: this.clickUrl,
+          version: VERSION,
+          baseUrl: BASE_URL
         });
 
         return WORKER_URL + '?' + options;

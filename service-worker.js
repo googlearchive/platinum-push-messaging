@@ -15,6 +15,18 @@ var DATA_SUPPORT = Notification.prototype.hasOwnProperty('data');
 
 self.skipWaiting();
 
+/**
+ * Resolves a URL that is relative to the registering page to an absolute URL
+ *
+ * @param url {String} a relative URL
+ * @return {String} the equivalent absolute URL
+ */
+var absUrl = function(url) {
+  if (typeof(url) === 'string') {
+    return new URL(url, options.baseUrl).href;
+  }
+};
+
 var getClientWindows = function() {
   return clients.matchAll({
     type: 'window',
@@ -49,7 +61,7 @@ var notify = function(data) {
   var messagePromise;
 
   if (options.messageUrl) {
-    messagePromise = fetch(options.messageUrl).then(function(response) {
+    messagePromise = fetch(absUrl(options.messageUrl)).then(function(response) {
       return response.json();
     });
   } else {
@@ -61,11 +73,11 @@ var notify = function(data) {
       title: message.title || options.title || '',
       body: message.message || options.message || '',
       tag: message.tag || options.tag || DEFAULT_TAG,
-      icon: message.icon || options.iconUrl,
+      icon: absUrl(message.icon || options.iconUrl),
       data: message
     };
 
-    var clickUrl = message.url || options.clickUrl;
+    var clickUrl = absUrl(message.url || options.clickUrl);
 
     if (!DATA_SUPPORT) {
       // If there is no 'data' property support on the notification then we have
@@ -97,7 +109,7 @@ var clickHandler = function(notification) {
     message = JSON.parse(decodeURIComponent(message));
   }
 
-  var url = message.url || options.clickUrl;
+  var url = absUrl(message.url || options.clickUrl);
 
   if (!url) {
     return;
