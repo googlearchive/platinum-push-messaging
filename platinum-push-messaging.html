@@ -34,6 +34,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      */
     var VERSION = 1;
 
+    // This allows us to use the PushSubscription attribute type in browsers
+    // where it is not defined.
+    if (!('PushSubscription' in window)) {
+      window.PushSubscription = {};
+    }
+
     /**
      * `<platinum-push-messaging>` sets up a
      * [push messaging](http://updates.html5rocks.com/2015/03/push-notificatons-on-the-open-web)
@@ -102,7 +108,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           readOnly: true,
           type: PushSubscription,
           notify: true,
-          value: ''
         },
 
         /**
@@ -298,7 +303,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        */
       enable: function() {
         if (!this.supported) {
-          return this.fire('platinum-push-messaging-error', 'Your browser does not support push notifications');
+          this.fire('platinum-push-messaging-error', 'Your browser does not support push notifications');
+          return Promise.resolve();
         }
 
         return navigator.serviceWorker.register(this._getWorkerURL(), {scope: SCOPE}).then(function(registration) {
@@ -319,25 +325,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        * @return {Promise<undefined>}
        */
       disable: function() {
-        if (this.supported) {
-          this._getRegistration().then(function(registration) {
-            if (!registration) {
-              return;
-            }
-            return registration.pushManager.getSubscription().then(function(subscription) {
-              if (subscription) {
-                return subscription.unsubscribe();
-              }
-            }).then(function() {
-              return registration.unregister();
-            }).then(function() {
-              this._setSubscription();
-              this._setEnabled(false);
-            }.bind(this)).catch(function(error) {
-              this.fire('platinum-push-messaging-error', error.message || error);
-            }.bind(this));
-          }.bind(this));
+        if (!this.supported) {
+          return Promise.resolve();
         }
+
+        return this._getRegistration().then(function(registration) {
+          if (!registration) {
+            return;
+          }
+          return registration.pushManager.getSubscription().then(function(subscription) {
+            if (subscription) {
+              return subscription.unsubscribe();
+            }
+          }).then(function() {
+            return registration.unregister();
+          }).then(function() {
+            this._setSubscription();
+            this._setEnabled(false);
+          }.bind(this)).catch(function(error) {
+            this.fire('platinum-push-messaging-error', error.message || error);
+          }.bind(this));
+        }.bind(this));
       },
 
       ready: function() {

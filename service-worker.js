@@ -139,3 +139,4 @@ self.addEventListener('push', function(event) {
 self.addEventListener('notificationclick', function(event) {
   event.waitUntil(clickHandler(event.notification));
 });
+
