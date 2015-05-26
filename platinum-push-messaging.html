@@ -303,7 +303,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         return navigator.serviceWorker.register(this._getWorkerURL(), {scope: SCOPE}).then(function(registration) {
           return this._registrationReady(registration).then(function() {
-            return registration.pushManager.subscribe();
+            return registration.pushManager.subscribe({userVisibleOnly: true});
           });
         }.bind(this)).then(function(subscription) {
           this._setSubscription(subscription);
