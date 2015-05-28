@@ -417,6 +417,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
             return registration.pushManager.getSubscription().then(function(subscription) {
               this._updateSubscription(subscription);
+              this._setEnabled(true);
             }.bind(this));
           }.bind(this));
         }
