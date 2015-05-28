@@ -140,3 +140,12 @@ self.addEventListener('notificationclick', function(event) {
   event.waitUntil(clickHandler(event.notification));
 });
 
+self.addEventListener('message', function(event) {
+  if (event.data.type == 'test-push') {
+    notify({
+      json: function() {
+        return Promise.resolve(event.data.message);
+      }
+    });
+  }
+});

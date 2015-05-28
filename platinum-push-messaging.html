@@ -41,14 +41,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
     /**
-     * `<platinum-push-messaging>` sets up a
-     * [push messaging](http://updates.html5rocks.com/2015/03/push-notificatons-on-the-open-web)
-     * subscription and allows you to define what happens when a push message is
-     * received.
+     * `<platinum-push-messaging>` sets up a [push messaging][1] subscription
+     * and allows you to define what happens when a push message is received.
      *
      * The element can be placed anywhere, but should only be used once in a
      * page. If there are multiple occurrences, only one will be active.
      *
+     * # Requirements
+     * Push messaging is currently only available in Google Chrome, which
+     * requires you to configure Google Cloud Messaging. Chrome will check that
+     * your page links to a manifest file that contains a `gcm_sender_id` field.
+     * You can find full details of how to set all of this up in the [HTML5
+     * Rocks guide to push notifications][1].
+     *
+     * # Notifcation details
      * The data for how a notification should be displayed can come from one of
      * three places.
      *
@@ -85,6 +91,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * ```
      * These values will also be used as defaults if one of the other methods
      * does not provide a value for that property.
+     *
+     * # Testing
+     * If you have set up Google Cloud Messaging then you can send push messages
+     * to your browser by following the guide in the [GCM documentation][2].
+     *
+     * However, for quick client testing there are two options. You can use the
+     * `testPush` method, which allows you to simulate a push message that
+     * includes a payload.
+     *
+     * Or, at a lower level, you can open up chrome://serviceworker-internals in
+     * Chrome and use the 'Push' button for the service worker corresponding to
+     * your app.
+     *
+     * [1]: http://updates.html5rocks.com/2015/03/push-notificatons-on-the-open-web
+     * [2]: https://developer.android.com/google/gcm/http.html
      *
      * @demo demo/
      */
@@ -178,7 +199,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        * click URL.
        *
        * @event platinum-push-messaging-click
-       * @detail {Object} The push message data used to create the notification
+       * @param {Object} The push message data used to create the notification
        */
 
       /**
@@ -187,14 +208,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        * visible to the user on the screen.
        *
        * @event platinum-push-messaging-push
-       * @detail {Object} The push message data that was received
+       * @param {Object} The push message data that was received
        */
 
       /**
        * Fired when an error occurs while enabling or disabling notifications
        *
        * @event platinum-push-messaging-error
-       * @detail {String} The error message
+       * @param {String} The error message
        */
 
       /**
@@ -299,6 +320,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       /**
+       * Update the subscription property, but only if the value has changed.
+       * This prevents triggering the subscription-changed event twice on page
+       * load.
+       */
+      _updateSubscription: function(subscription) {
+        if (JSON.stringify(subscription) !== JSON.stringify(this.subscription)) {
+          this._setSubscription(subscription);
+        }
+      },
+
+      /**
+       * Programmatically trigger a push message
+       *
+       * @param message {Object} the message payload
+       */
+      testPush: function(message) {
+        this._getRegistration().then(function(registration) {
+          registration.active.postMessage({
+            type: 'test-push',
+            message: message
+          });
+        });
+      },
+
+      /**
        * Request push messaging to be enabled.
        *
        * @return {Promise<undefined>}
@@ -314,7 +360,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             return registration.pushManager.subscribe({userVisibleOnly: true});
           });
         }.bind(this)).then(function(subscription) {
-          this._setSubscription(subscription);
+          this._updateSubscription(subscription);
           this._setEnabled(true);
         }.bind(this)).catch(function(error) {
           this.fire('platinum-push-messaging-error', error.message || error);
@@ -342,7 +388,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }).then(function() {
             return registration.unregister();
           }).then(function() {
-            this._setSubscription();
+            this._updateSubscription();
             this._setEnabled(false);
           }.bind(this)).catch(function(error) {
             this.fire('platinum-push-messaging-error', error.message || error);
@@ -370,7 +416,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               return this.enable();
             }
             return registration.pushManager.getSubscription().then(function(subscription) {
-              this._setSubscription(subscription);
+              this._updateSubscription(subscription);
             }.bind(this));
           }.bind(this));
         }
