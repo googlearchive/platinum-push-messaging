@@ -116,8 +116,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       });
 
       ppm.addEventListener('subscription-changed', function(event) {
+        // GCM always needs the subscriptionId passed separately. Note that as of M45,
+        // the subscriptionId and the endpoint have merged.
+        var subscriptionId = ppm.subscription ? ppm.subscription.subscriptionId : undefined;
+        if (ppm.subscription && !ppm.subscription.subscriptionId) {
+          var endpointSections = ppm.subscription.endpoint.split('/');
+          subscriptionId = endpointSections[endpointSections.length - 1];
+        }
+
         subscription.textContent = JSON.stringify(ppm.subscription || undefined, null, 2);
-        registrationId.textContent = ppm.subscription ? ppm.subscription.subscriptionId : '';
+        registrationId.textContent = subscriptionId ? subscriptionId : '';
       });
 
       ppm.addEventListener('enabled-changed', function(event) {
