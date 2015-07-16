@@ -303,7 +303,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }).map(function(propName) {
           return JSON.stringify(propName) + ':' + JSON.stringify(options[propName]);
         });
-        return '{' + parts.join(',') + '}';
+        return encodeURIComponent('{' + parts.join(',') + '}');
       },
 
       /**
