@@ -75,9 +75,9 @@ var notify = function(data) {
 
     var detail = {
       title: message.title || options.title || '',
-      body: message.message || options.message || '',
+      body: message.body || options.body || '',
       tag: message.tag || options.tag || DEFAULT_TAG,
-      icon: absUrl(message.icon || options.iconUrl),
+      icon: absUrl(message.icon || options.icon),
       sound: absUrl(message.sound || options.sound),
       data: message
     };
