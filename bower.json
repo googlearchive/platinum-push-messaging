@@ -19,7 +19,8 @@
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components"
+    "bower_components",
+    "demo"
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.0.0",
