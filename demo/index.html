@@ -93,7 +93,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </div>
 
     <script>
-    document.addEventListener('WebComponentsReady', function() {
       var ppm = document.querySelector('platinum-push-messaging');
       var toggle = document.getElementById('enable-push');
       var subscription = document.getElementById('subscription');
@@ -132,7 +131,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         toggle.checked = ppm.enabled;
         sendInstructions.style.display = ppm.enabled ? '' : 'none';
       });
-    });
     </script>
   </body>
 </html>
