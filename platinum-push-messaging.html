@@ -168,6 +168,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         messageUrl: String,
 
         /**
+         * If true then the fetch "credentials" of the request to "messageUrl" will
+         * be set to "include", allowing the browser to request the URL as the
+         * current user.
+         *
+         * This is helpful when the server will reject a message from an
+         * unauthenticated user.
+         */
+        useCredentials: {
+          type: Boolean,
+          value: false
+        },
+
+        /**
          * The default notification title.
          */
         title: String,
@@ -378,6 +391,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var options = this._serializeOptions({
           tag: this.tag,
           messageUrl: this.messageUrl,
+          useCredentials: this.useCredentials,
           title: this.title,
           message: this.message,
           iconUrl: this.iconUrl,

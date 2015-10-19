@@ -61,7 +61,11 @@ var notify = function(data) {
   var messagePromise;
 
   if (options.messageUrl) {
-    messagePromise = fetch(absUrl(options.messageUrl)).then(function(response) {
+    var fetchOptions = {};
+    if( options.useCredentials ) {
+      fetchOptions.credentials = 'include';
+    }
+    messagePromise = fetch(absUrl(options.messageUrl),fetchOptions).then(function(response) {
       return response.json();
     });
   } else {
