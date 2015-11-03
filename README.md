@@ -18,7 +18,7 @@ _[Demo and API Docs](https://elements.polymer-project.org/elements/platinum-push
 `<platinum-push-messaging>` sets up a [push messaging][1] subscription
 and allows you to define what happens when a push message is received.
 
-The element can be placed anywhere, but should only be used once in a
+The element should be placed inside of a [platinum-sw-register element](https://elements.polymer-project.org/elements/platinum-sw?active=platinum-sw-register) and should only be used once in a
 page. If there are multiple occurrences, only one will be active.
 
 # Sample
@@ -39,16 +39,28 @@ three places.
 
 Firstly, you can specify a URL from which to fetch the message data.
 ```
-<platinum-push-messaging
-  message-url="notification-data.json">
-</platinum-push-messaging>
+<platinum-sw-register>
+  
+  <!--...any other <platinum-sw-*> children which share the registration -->
+  
+  <platinum-push-messaging
+    message-url="notification-data.json">
+  </platinum-push-messaging>
+  
+</platinum-sw-register>
 ```
 
 The second way is to send the message data in the body of
 the push message from your server. In this case you do not need to
 configure anything in your page:
 ```
-<platinum-push-messaging></platinum-push-messaging>
+<platinum-sw-register>
+  
+  <!--...any other <platinum-sw-*> children which share the registration -->
+
+  <platinum-push-messaging></platinum-push-messaging>
+
+</platinum-sw-register>
 ```
 **Note that this method is not currently supported by any browser**. It
 is, however, defined in the
@@ -61,12 +73,18 @@ favor of the first method.
 
 Thirdly, you can manually define the attributes on the element:
 ```
-<platinum-push-messaging
-  title="Application updated"
-  message="The application was updated in the background"
-  icon-url="icon.png"
-  click-url="notification.html">
-</platinum-push-messaging>
+<platinum-sw-register>
+  
+  <!--...any other <platinum-sw-*> children which share the registration -->
+
+  <platinum-push-messaging
+    title="Application updated"
+    message="The application was updated in the background"
+    icon-url="icon.png"
+    click-url="notification.html">
+  </platinum-push-messaging>
+
+</platinum-sw-register>
 ```
 These values will also be used as defaults if one of the other methods
 does not provide a value for that property.
