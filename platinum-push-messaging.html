@@ -309,7 +309,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           // If we have a service worker whose scope is a superset of the push
           // scope then getRegistration will return that if our own worker is
           // not registered. Check that the registration we have is really ours
-          if (registration.scope === SCOPE) {
+          if (registration && registration.scope === SCOPE) {
             return registration;
           }
 
