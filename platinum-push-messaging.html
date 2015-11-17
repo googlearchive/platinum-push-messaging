@@ -305,7 +305,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        * @return {Promise<ServiceWorkerRegistration>}
        */
       _getRegistration: function() {
-        return navigator.serviceWorker.getRegistration(SCOPE);
+        return navigator.serviceWorker.getRegistration(SCOPE).then(function(registration) {
+          // If we have a service worker whose scope is a superset of the push
+          // scope then getRegistration will return that if our own worker is
+          // not registered. Check that the registration we have is really ours
+          if (registration.scope === SCOPE) {
+            return registration;
+          }
+
+          return;
+        });
       },
 
       /**
