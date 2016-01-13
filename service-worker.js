@@ -62,10 +62,14 @@ var notify = function(data) {
 
   if (options.messageUrl) {
     var fetchOptions = {};
-    if( options.useCredentials ) {
+
+    if (options.useCredentials) {
       fetchOptions.credentials = 'include';
     }
-    messagePromise = fetch(absUrl(options.messageUrl),fetchOptions).then(function(response) {
+
+    var request = new Request(absUrl(options.messageUrl), fetchOptions);
+
+    messagePromise = fetch(request).then(function(response) {
       return response.json();
     });
   } else {
