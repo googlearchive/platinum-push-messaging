@@ -74,7 +74,7 @@ var notify = function(data) {
       return response.json();
     });
   } else {
-    messagePromise = data ? data.json() : Promise.resolve({});
+    messagePromise = data ? Promise.resolve(data.json()) : Promise.resolve({});
   }
 
   return messagePromise.then(function(message) {
