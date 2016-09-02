@@ -285,6 +285,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           value: document.location.href
         },
+
+        /**
+         * When a user clicks the notification, there could be a number of different
+         * windows available that the service worker controls.  The default behavior
+         * is to open a new window unless the exact window with the desired URL is
+         * already open (in which case that window receives a "platinum-push-messaging-click"
+         * event).
+         *
+         * By specifying a focus URL here, instead of requiring an exact match, any
+         * window with a URL that begins with this one will be used.  This may be
+         * beneficial for single-page apps that do hash-based routing.
+         *
+         * This may be either a relative URL or an absolute one.
+         */
+        focusUrl: String,
       },
 
       /**
@@ -415,6 +430,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           message: this.message,
           iconUrl: this.iconUrl,
           clickUrl: this.clickUrl,
+          focusUrl: this.focusUrl,
           dir: this.dir,
           lang: this.lang,
           noscreen: this.noscreen,
