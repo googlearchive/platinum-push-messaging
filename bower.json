@@ -1,5 +1,6 @@
 {
   "name": "platinum-push-messaging",
+  "version": "1.0.3",
   "private": true,
   "license": "http://polymer.github.io/LICENSE.txt",
   "authors": [
