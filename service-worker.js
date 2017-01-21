@@ -133,13 +133,42 @@ var clickHandler = function(notification) {
     return;
   }
 
+  // This is the focus URL.  If the "focus-url" property was not set, then this
+  // will be undefined and will not be used.
+  var focusUrl = absUrl( options.focusUrl );
+
   return getClientWindows().then(function(clientList) {
+    // Go through the windows that this service worker controls.
+    // Focus the first one that matches the message's URL.
+    //
+    // Attempt to match the first client that already has the desired URL open.
+    //
+    // Otherwise, if this service worker was configured with a "focus-url", then
+    // attempt to match the first client that begins with that URL.
+    //
+    // A client matched in this way will receive a "platinum-push-messaging-*"
+    // event.
+    //
+    // Finally, if no client was matched, then open up a new window to
+    // show the URL.  This window will NOT receive a "platinum-push-messaging-*"
+    // event.
     for (var client of clientList) {
-      if (client.url === url && 'focus' in client) {
+      // Exclude client instances that do not support the properties that we need.
+      if (!('url' in client) || !('focus' in client)) {
+        continue;
+      }
+      // See if the client URL that we want is already up somewhere.
+      // Otherwise, see if there is a window that starts with the focus URL
+      // already open.
+      if(client.url === url) {
+        client.focus();
+        return client;
+      } else if (focusUrl && client.url.startsWith(focusUrl)) {
         client.focus();
         return client;
       }
     }
+    // If no existing window could be used, then open a new one.
     if ('openWindow' in clients) {
       return clients.openWindow(url);
     }
