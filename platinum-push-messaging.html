@@ -269,7 +269,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         /**
          * The pattern of vibration that should be used by default when a
-         * notification is displayed. See
+         * notification is displayed.  This is represented as an array of
+         * integers, representing a number of milliseconds of vibration
+         * followed by a number of milliseconds of silence, and so on.
+         *
+         * For example, this would provide two quick pulses:
+         *
+         *     [100,200,100]
+         *
+         * For more information, see the [Vibration API](https://www.w3.org/TR/vibration/).
          */
         vibrate: Array,
 
