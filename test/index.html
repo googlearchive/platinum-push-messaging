@@ -18,7 +18,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script>
       if ('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window) {
         WCT.loadSuites([
-          'supported.html',
+          'supported.html?wc-shadydom=true&wc-ce=true',
           'supported.html?dom=shadow'
         ]);
       } else {

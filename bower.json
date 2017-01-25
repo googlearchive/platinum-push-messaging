@@ -1,6 +1,6 @@
 {
   "name": "platinum-push-messaging",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "private": true,
   "license": "http://polymer.github.io/LICENSE.txt",
   "authors": [
@@ -24,16 +24,31 @@
     "demo"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.0.0",
+    "polymer": "Polymer/polymer#2.0-preview",
     "promise-polyfill": "PolymerLabs/promise-polyfill#^1.0.0"
   },
   "devDependencies": {
-    "iron-component-page": "PolymerElements/iron-component-page#^1.0.2",
-    "web-component-tester": "^4.0.0",
-    "paper-styles": "PolymerElements/paper-styles#^1.0.0",
-    "paper-material": "PolymerElements/paper-material#^1.0.0",
-    "paper-toggle-button": "PolymerElements/paper-toggle-button#^1.0.0",
-    "paper-item": "PolymerElements/paper-item#^1.0.0"
+    "iron-component-page": "PolymerElements/iron-component-page#2.0-preview",
+    "web-component-tester": "v6.0.0-prerelease.5",
+    "paper-styles": "PolymerElements/paper-styles#2.0-preview",
+    "paper-material": "PolymerElements/paper-material#2.0-preview",
+    "paper-toggle-button": "PolymerElements/paper-toggle-button#2.0-preview",
+    "paper-item": "PolymerElements/paper-item#2.0-preview"
   },
-  "main": "platinum-push-messaging.html"
+  "main": "platinum-push-messaging.html",
+  "variants": {
+    "1.x": {
+      "dependencies": {
+        "polymer": "Polymer/polymer#^1.0.0",
+        "promise-polyfill": "PolymerLabs/promise-polyfill#^1.0.0"
+      },
+      "devDependencies": {
+        "iron-component-page": "PolymerElements/iron-component-page#^1.0.2",
+        "paper-styles": "PolymerElements/paper-styles#^1.0.0",
+        "paper-material": "PolymerElements/paper-material#^1.0.0",
+        "paper-toggle-button": "PolymerElements/paper-toggle-button#^1.0.0",
+        "paper-item": "PolymerElements/paper-item#^1.0.0"
+      }
+    }
+  }
 }
