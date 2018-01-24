@@ -1,0 +1,39 @@
+{
+  "name": "@polymer/platinum-push-messaging",
+  "flat": true,
+  "version": "3.0.0-pre.6",
+  "description": "Subscribes for push messaging and handles notifications.",
+  "contributors": [
+    "The Polymer Authors"
+  ],
+  "keywords": [
+    "push",
+    "messaging",
+    "notification",
+    "polymer",
+    "service-worker",
+    "serviceworker",
+    "web-component",
+    "web-components"
+  ],
+  "main": "platinum-push-messaging.html",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "@polymer/polymer": "^3.0.0-pre.6",
+    "@polymer/promise-polyfill": "^3.0.0-pre.6"
+  },
+  "devDependencies": {
+    "@polymer/iron-component-page": "^3.0.0-pre.6",
+    "wct-browser-legacy": "0.0.1-pre.11",
+    "@polymer/paper-styles": "^3.0.0-pre.6",
+    "@polymer/paper-material": "^3.0.0-pre.6",
+    "@polymer/paper-toggle-button": "^3.0.0-pre.6",
+    "@polymer/paper-item": "^3.0.0-pre.6"
+  },
+  "resolutions": {
+    "inherits": "2.0.3",
+    "samsam": "1.1.3",
+    "supports-color": "3.1.2",
+    "type-detect": "1.0.0"
+  }
+}

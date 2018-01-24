@@ -14,12 +14,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>&lt;platinum-push-messaging&gt; Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
-    <link rel="import" href="../../paper-styles/paper-styles.html">
-    <link rel="import" href="../../paper-styles/classes/global.html">
-    <link rel="import" href="../../paper-item/paper-item.html">
-    <link rel="import" href="../../paper-material/paper-material.html">
-    <link rel="import" href="../../paper-toggle-button/paper-toggle-button.html">
-    <link rel="import" href="../platinum-push-messaging.html">
+    <script type="module" src="../../paper-styles/paper-styles.js"></script>
+    <script type="module" src="../../paper-styles/classes/global.js"></script>
+    <script type="module" src="../../paper-item/paper-item.js"></script>
+    <script type="module" src="../../paper-material/paper-material.js"></script>
+    <script type="module" src="../../paper-toggle-button/paper-toggle-button.js"></script>
+    <script type="module" src="../platinum-push-messaging.js"></script>
     <link rel="manifest" href="manifest.json">
 
     <style>
@@ -93,47 +93,51 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </paper-material>
     </div>
 
-    <script>
-    document.addEventListener('WebComponentsReady', function() {
-      var ppm = document.querySelector('platinum-push-messaging');
-      var toggle = document.getElementById('enable-push');
-      var subscription = document.getElementById('subscription');
-      var registrationId = document.getElementById('registration-id');
-      var sendInstructions = document.getElementById('send-instructions');
+    <script type="module">
+import '../../paper-styles/paper-styles.js';
+import '../../paper-styles/classes/global.js';
+import '../../paper-item/paper-item.js';
+import '../../paper-material/paper-material.js';
+import '../../paper-toggle-button/paper-toggle-button.js';
+import '../platinum-push-messaging.js';
+var ppm = document.querySelector('platinum-push-messaging');
+var toggle = document.getElementById('enable-push');
+var subscription = document.getElementById('subscription');
+var registrationId = document.getElementById('registration-id');
+var sendInstructions = document.getElementById('send-instructions');
 
-      toggle.disabled = !ppm.supported;
+toggle.disabled = !ppm.supported;
 
-      if (!ppm.supported) {
-        document.getElementById('supported').style.display = 'none';
-        document.getElementById('unsupported').style.display = '';
-      }
+if (!ppm.supported) {
+  document.getElementById('supported').style.display = 'none';
+  document.getElementById('unsupported').style.display = '';
+}
 
-      toggle.addEventListener('change', function() {
-        if (toggle.checked) {
-          ppm.enable();
-        } else {
-          ppm.disable();
-        }
-      });
+toggle.addEventListener('change', function() {
+  if (toggle.checked) {
+    ppm.enable();
+  } else {
+    ppm.disable();
+  }
+});
 
-      ppm.addEventListener('subscription-changed', function(event) {
-        // GCM always needs the subscriptionId passed separately. Note that as of M45,
-        // the subscriptionId and the endpoint have merged.
-        var subscriptionId = ppm.subscription ? ppm.subscription.subscriptionId : undefined;
-        if (ppm.subscription && !ppm.subscription.subscriptionId) {
-          var endpointSections = ppm.subscription.endpoint.split('/');
-          subscriptionId = endpointSections[endpointSections.length - 1];
-        }
+ppm.addEventListener('subscription-changed', function(event) {
+  // GCM always needs the subscriptionId passed separately. Note that as of M45,
+  // the subscriptionId and the endpoint have merged.
+  var subscriptionId = ppm.subscription ? ppm.subscription.subscriptionId : undefined;
+  if (ppm.subscription && !ppm.subscription.subscriptionId) {
+    var endpointSections = ppm.subscription.endpoint.split('/');
+    subscriptionId = endpointSections[endpointSections.length - 1];
+  }
 
-        subscription.textContent = JSON.stringify(ppm.subscription || undefined, null, 2);
-        registrationId.textContent = subscriptionId ? subscriptionId : '';
-      });
+  subscription.textContent = JSON.stringify(ppm.subscription || undefined, null, 2);
+  registrationId.textContent = subscriptionId ? subscriptionId : '';
+});
 
-      ppm.addEventListener('enabled-changed', function(event) {
-        toggle.checked = ppm.enabled;
-        sendInstructions.style.display = ppm.enabled ? '' : 'none';
-      });
-    });
-    </script>
+ppm.addEventListener('enabled-changed', function(event) {
+  toggle.checked = ppm.enabled;
+  sendInstructions.style.display = ppm.enabled ? '' : 'none';
+});
+</script>
   </body>
 </html>

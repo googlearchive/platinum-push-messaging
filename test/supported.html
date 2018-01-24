@@ -13,57 +13,58 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../../@webcomponents/webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../wct-browser-legacy/browser.js"></script>
 
     <link rel="manifest" href="../demo/manifest.json">
-    <link rel="import" href="../platinum-push-messaging.html">
+    <script type="module" src="../platinum-push-messaging.js"></script>
   </head>
 
   <body>
     <platinum-push-messaging>
     </platinum-push-messaging>
 
-    <script>
-      // Not registered or subscribed to start
-      // Register worker
-      // Get a subscription
-      // Trigger a push? Hard to test...
-      var el = document.querySelector('platinum-push-messaging');
+    <script type="module">
+import '../platinum-push-messaging.js';
+// Not registered or subscribed to start
+// Register worker
+// Get a subscription
+// Trigger a push? Hard to test...
+var el = document.querySelector('platinum-push-messaging');
 
-      suite('Element state', function() {
-        setup(function(done) {
-          // Beginning state should be disabled
-          el.disable().then(done, done);
-        });
+suite('Element state', function() {
+  setup(function(done) {
+    // Beginning state should be disabled
+    el.disable().then(done, done);
+  });
 
-        test('Default properties', function() {
-          assert.isUndefined(el.subscription, 'subscription');
-          assert.isFalse(el.enabled, 'enabled');
-          assert.isTrue(el.supported, 'supported');
-        });
+  test('Default properties', function() {
+    assert.isUndefined(el.subscription, 'subscription');
+    assert.isFalse(el.enabled, 'enabled');
+    assert.isTrue(el.supported, 'supported');
+  });
 
-        test('No worker registered', function(done) {
-          el._getRegistration().then(function(registration) {
-            assert.isUndefined(registration);
-          }).then(done, done);
-        });
+  test('No worker registered', function(done) {
+    el._getRegistration().then(function(registration) {
+      assert.isUndefined(registration);
+    }).then(done, done);
+  });
 
-        test('Enable', function(done) {
-          el.enable().then(function() {
-            assert.instanceOf(el.subscription, PushSubscription, 'subscription');
-            assert.isTrue(el.enabled, 'enabled');
-          }).then(done, done);
-        });
+  test('Enable', function(done) {
+    el.enable().then(function() {
+      assert.instanceOf(el.subscription, PushSubscription, 'subscription');
+      assert.isTrue(el.enabled, 'enabled');
+    }).then(done, done);
+  });
 
-        test('Disable', function(done) {
-          el.disable().then(function() {
-            assert.isUndefined(el.subscription, 'subscription');
-            assert.isFalse(el.enabled, 'enabled');
-          }).then(done, done);
-        });
+  test('Disable', function(done) {
+    el.disable().then(function() {
+      assert.isUndefined(el.subscription, 'subscription');
+      assert.isFalse(el.enabled, 'enabled');
+    }).then(done, done);
+  });
 
-      });
-    </script>
+});
+</script>
   </body>
 </html>
